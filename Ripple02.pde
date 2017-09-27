@@ -14,7 +14,7 @@ void settings() {
   thread("stateFlipper");
 }
 
-void initPattern() {
+void initPatterns() {
   PATTERN_COUNT = 6;
 
   patterns = new Pattern[PATTERN_COUNT];
@@ -27,6 +27,8 @@ void initPattern() {
   patterns[4] = new VerticalPlanePattern();
   patterns[5] = new CombinationPlanePattern();
   
+  //patterns[6] = new TextPattern();
+
   for (int i=0; i<PATTERN_COUNT; i++) {
     patterns[i].init();
   }
@@ -42,12 +44,14 @@ void setup() {
   opc.init(screen.getPanels());
   
   // default pattern
-  initPattern();
+  initPatterns();
 }
 
 private Pattern getNextPattern() {
   patternCounter++;
   if (patternCounter+1 > PATTERN_COUNT) {
+    // create new patterns
+    initPatterns();
     patternCounter= 0;
   }
   return patterns[patternCounter];
@@ -57,10 +61,8 @@ void draw() {
   if (timerTriggered) {
     // move to next pattern
     getNextPattern();
-    
     // reset count
     pauseCount = 1;
-    
     // reset trigger
     timerTriggered = false;
   }
@@ -76,12 +78,17 @@ void draw() {
   opc.push();
   opc.draw(screen.getPanels());
   
-  int delay = 100;
-  if (pauseCount == 50) {
-     delay = 2000;
-     pauseCount = 1;
+  if (patterns[patternCounter].getDelay() == -1) {
+    // don't use pattern delay
+    int delay = 100;
+    if (pauseCount == 50) {
+       delay = 2000;
+       pauseCount = 1;
+    }
+    delay(delay);
+  } else {
+    delay(patterns[patternCounter].getDelay());
   }
-  delay(delay);
 }
 
 void stateFlipper() {

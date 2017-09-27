@@ -16,6 +16,6 @@ public class Constants {
     public static final int PIXELS_PER_PANEL_WIDTH = 10;
     public static final int PIXELS_PER_PANEL_HEIGHT = 10;
 
-    public static final int TIMER_DELAY = 20 * 1000;
+    public static final int TIMER_DELAY = 60 * 1000;
 
 }

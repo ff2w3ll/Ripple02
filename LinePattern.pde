@@ -48,8 +48,7 @@ class HorizontalLinePattern extends Pattern {
   }
   
   public int getDelay() {
-    int delay = 100;
-    return delay;
+    return -1;
   }
 
 }
@@ -104,8 +103,7 @@ class VerticalLinePattern extends Pattern {
   }
   
   public int getDelay() {
-    int delay = 100;
-    return delay;
+    return -1;
   }
 
 }
@@ -138,8 +136,7 @@ class CombinationLinePattern extends Pattern {
   }
   
   public int getDelay() {
-    int delay = 100;
-    return delay;
+    return -1;
   }
   
 

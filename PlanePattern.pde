@@ -27,8 +27,7 @@ class HorizontalPlanePattern extends Pattern {
   }
   
   public int getDelay() {
-    int delay = 100;
-    return delay;
+    return -1;
   }
   
 }
@@ -62,8 +61,7 @@ class VerticalPlanePattern extends Pattern {
   }
   
   public int getDelay() {
-    int delay = 100;
-    return delay;
+    return -1;
   }
   
 }
@@ -95,8 +93,7 @@ class CombinationPlanePattern extends Pattern {
   }
   
   public int getDelay() {
-    int delay = 100;
-    return delay;
+    return -1;
   }
   
 }
