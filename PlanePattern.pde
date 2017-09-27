@@ -22,7 +22,7 @@ class HorizontalPlanePattern extends Pattern {
   
   public void shift() {
     for (int i=0; i<PLANE_COUNT; i++) {
-      horizontalPlanes[i].move();
+      horizontalPlanes[i].shift();
     }
   }
   
@@ -36,30 +36,62 @@ class HorizontalPlanePattern extends Pattern {
 // ==========================================================================
 // ==========================================================================
 
-class PerpendicularVerticalPattern extends Pattern {
+class VerticalPlanePattern extends Pattern {
   
-  private PerpendicularVerticalPlane[] perpendicularVerticalPlanes;
+  private VerticalPlane[] verticalPlanes;
   private int PLANE_COUNT = 2;
   
   public void init() {
-    perpendicularVerticalPlanes = new PerpendicularVerticalPlane[PLANE_COUNT];
+    verticalPlanes = new VerticalPlane[PLANE_COUNT];
     for (int i=0; i<PLANE_COUNT; i++) {
       color c = color(random(255),random(255),random(255));
-      perpendicularVerticalPlanes[i] = new PerpendicularVerticalPlane(c, i*(10/PLANE_COUNT), true);  
+      verticalPlanes[i] = new VerticalPlane(c, i*(10/PLANE_COUNT), true);  
     }
   }
   
   public void draw() {
     for (int i=0; i<PLANE_COUNT; i++) {
-      perpendicularVerticalPlanes[i].draw();
+      verticalPlanes[i].draw();
     }
-    count++;
   }
   
   public void shift() {
     for (int i=0; i<PLANE_COUNT; i++) {
-      perpendicularVerticalPlanes[i].move();
+      verticalPlanes[i].shift();
     }
+  }
+  
+  public int getDelay() {
+    int delay = 100;
+    return delay;
+  }
+  
+}
+
+// ==========================================================================
+// ==========================================================================
+
+class CombinationPlanePattern extends Pattern {
+  
+  private HorizontalPlanePattern horizontalPlanePattern;
+  private VerticalPlanePattern verticalPlanePattern;
+  
+  public void init() {
+    horizontalPlanePattern = new HorizontalPlanePattern();
+    verticalPlanePattern = new VerticalPlanePattern();
+
+    horizontalPlanePattern.init();
+    verticalPlanePattern.init();
+  }
+  
+  public void draw() {
+    horizontalPlanePattern.draw();
+    verticalPlanePattern.draw();
+  }
+  
+  public void shift() {
+    horizontalPlanePattern.shift();
+    verticalPlanePattern.shift();
   }
   
   public int getDelay() {

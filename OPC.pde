@@ -39,7 +39,7 @@ class RippleOPC {
         for (int i=0; i<indexedCentres.length; i++) {
           Point centeredPoint = indexedCentres[i];
           int offsettedIndex = getOffsettedIndex(0, v, h, i);
-          println(offsettedIndex, centeredPoint.getX(), centeredPoint.getY(), groupId);
+          //println(offsettedIndex, centeredPoint.getX(), centeredPoint.getY(), groupId);
           opc.led(offsettedIndex, centeredPoint.getX(), centeredPoint.getY(), groupId);
         }
         // -- lower strip
@@ -48,7 +48,7 @@ class RippleOPC {
         for (int i=0; i<indexedCentres.length; i++) {
           Point centeredPoint = indexedCentres[i];
           int offsettedIndex = getOffsettedIndex(50, v, h, i);
-          println(offsettedIndex, centeredPoint.getX(), centeredPoint.getY(), groupId);
+          //println(offsettedIndex, centeredPoint.getX(), centeredPoint.getY(), groupId);
           opc.led(offsettedIndex, centeredPoint.getX(), centeredPoint.getY(), groupId);
         }
       }

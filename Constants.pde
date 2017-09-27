@@ -1,4 +1,4 @@
-
+  
 public class Constants {
 
     public static final int MAIN_HEIGHT = 720; 
@@ -15,5 +15,7 @@ public class Constants {
     public static final int PANEL_HEIGHT = 240;
     public static final int PIXELS_PER_PANEL_WIDTH = 10;
     public static final int PIXELS_PER_PANEL_HEIGHT = 10;
+
+    public static final int TIMER_DELAY = 20 * 1000;
 
 }

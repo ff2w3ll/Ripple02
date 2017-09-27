@@ -13,67 +13,141 @@ abstract class Pattern {
 // ==========================================================================
 // ==========================================================================
 
+class Position {
+  
+  public static final int minXPosition = 1;
+  public static final int maxXPosition = 10;
+  public static final int minYPosition = 1;
+  public static final int maxYPosition = 20;
+  public static final int minZPosition = 1;
+  public static final int maxZPosition = 4;
+
+}
+
+// ==========================================================================
+// ==========================================================================
+
+abstract class ScreenElement {
+
+  public abstract void draw();
+  public abstract void shift();
+
+}
+
+// ==========================================================================
+// ==========================================================================
+
 class Pixel {
 }
 
 // ==========================================================================
 // ==========================================================================
 
-class Line {
+abstract class Line extends ScreenElement {
+  
+  int xPosition; 
+  int yPosition; 
+  int zPosition; 
+  int length; 
+  
+  color c;
+  
 }
 
 // ==========================================================================
 // ==========================================================================
 
-class Plane {
-  
-  
-}
+class HorizontalLine extends Line {
 
-// ==========================================================================
-// ==========================================================================
-
-class HorizontalPlane extends Plane {
-  
-  private color c;
-  private int position; 
-  private int maxPosition = 20; // 20 = top
-  private int minPosition = 1; // 1 = bottom
   private int h = (int) Constants.PANEL_HEIGHT / Constants.PIXELS_PER_PANEL_HEIGHT; // height of pixel
-  private int w = Constants.MAIN_WIDTH;;
-  private int topLeftX = 0; // always 0
-  private boolean upwards = true;
+  private int w = (int) Constants.PANEL_WIDTH / Constants.PIXELS_PER_PANEL_WIDTH; // width of pixel
+  private boolean right = true; // moving right
   
-  public HorizontalPlane(color c, int position, boolean upwards) {
+  public HorizontalLine(color c, int xPosition, int yPosition, int zPosition, int length, boolean right) {
     this.c = c;
-    this.position = position;
+    this.xPosition = xPosition;
+    this.yPosition = yPosition;
+    this.zPosition = zPosition;
+    this.length = length;
+    this.right = right;
+  }
+
+  public void draw() {
+    int topLeftX = ((zPosition - 1) * Constants.PANEL_WIDTH) + ((xPosition - 1) * w);
+    int topLeftY = (Position.maxYPosition - yPosition) * h; // determined from position
+    int lineWidth = w * length;
+    fill(c);
+    rect(topLeftX, topLeftY, lineWidth, h);
+  }
+  
+  public void shift() {
+    if ((xPosition + (length - 1)) == Position.maxXPosition) {
+      right = false; // move left
+    }
+    if (xPosition == Position.minXPosition) {
+      right = true; // move right
+    }
+    if (right) {
+      // move right
+      xPosition++;
+    } else {
+      // move left
+      xPosition--;
+    }
+  }
+
+}
+
+// ==========================================================================
+// ==========================================================================
+
+class VerticalLine extends Line {
+
+  private int h = (int) Constants.PANEL_HEIGHT / Constants.PIXELS_PER_PANEL_HEIGHT; // height of pixel
+  private int w = (int) Constants.PANEL_WIDTH / Constants.PIXELS_PER_PANEL_WIDTH; // width of pixel
+  private boolean upwards = true; // moving right
+  
+  public VerticalLine(color c, int xPosition, int yPosition, int zPosition, int length, boolean upwards) {
+    this.c = c;
+    this.xPosition = xPosition;
+    this.yPosition = yPosition;
+    this.zPosition = zPosition;
+    this.length = length;
     this.upwards = upwards;
   }
-  
-  /**
-   * Draw rectagle at correct height across screen
-   */
+
   public void draw() {
-    int topLeftY = (maxPosition - position) * h; // determined from position
+    int topLeftX = ((zPosition - 1) * Constants.PANEL_WIDTH) + ((xPosition - 1) * w);
+    int topLeftY = yPosition * h; // determined from position
+    int lineHeight = h * length;
     fill(c);
-    rect(topLeftX, topLeftY, w, h);
+    rect(topLeftX, topLeftY, w, lineHeight);
   }
   
-  public void move() {
-    if (position == maxPosition) {
-      upwards = false; // move down
-    }
-    if (position == minPosition) {
+  public void shift() {
+    if ((yPosition + length) == Position.maxYPosition) {
       upwards = true; // move up
+    }
+    if (yPosition == (Position.minYPosition - 1)) {
+      upwards = false; // move down
     }
     if (upwards) {
       // move up
-      position++;
+      yPosition--;
     } else {
       // move down
-      position--;
+      yPosition++;
     }
   }
+
+}
+
+// ==========================================================================
+// ==========================================================================
+
+abstract class Plane extends ScreenElement {
+
+  color c;
   
 }
 
@@ -81,9 +155,47 @@ class HorizontalPlane extends Plane {
 // ==========================================================================
 
 /**
- * Plane that runs flat to the front
+ * Plane runs horizontal to floor
  */
-class FlatVerticalPlane extends Plane {
+class HorizontalPlane extends Plane {
+  
+  private int yPosition; // height 
+  private int h = (int) Constants.PANEL_HEIGHT / Constants.PIXELS_PER_PANEL_HEIGHT; // height of pixel
+  private int w = Constants.MAIN_WIDTH;;
+  private int topLeftX = 0; // always 0
+  private boolean upwards = true;
+  
+  public HorizontalPlane(color c, int yPosition, boolean upwards) {
+    this.c = c;
+    this.yPosition = yPosition;
+    this.upwards = upwards;
+  }
+  
+  /**
+   * Draw rectagle at correct height across screen
+   */
+  public void draw() {
+    int topLeftY = (Position.maxYPosition - yPosition) * h; // determined from position
+    fill(c);
+    rect(topLeftX, topLeftY, w, h);
+  }
+  
+  public void shift() {
+    if (yPosition == Position.maxYPosition) {
+      upwards = false; // move down
+    }
+    if (yPosition == Position.minYPosition) {
+      upwards = true; // move up
+    }
+    if (upwards) {
+      // move up
+      yPosition++;
+    } else {
+      // move down
+      yPosition--;
+    }
+  }
+  
 }
 
 // ==========================================================================
@@ -92,20 +204,17 @@ class FlatVerticalPlane extends Plane {
 /**
  * Plane that runs perprendicular to the front
  */
-class PerpendicularVerticalPlane extends Plane {
+class VerticalPlane extends Plane {
 
-  private color c;
-  private int position; 
-  private int maxPosition = 10; // 10 = right
-  private int minPosition = 1; // 1 = left
+  private int xPosition; 
   private int h = Constants.PANEL_HEIGHT * 2; // height of screen
   private int w = (int) Constants.MAIN_WIDTH / (Constants.PIXELS_PER_PANEL_WIDTH * Constants.HORIZONTAL_PANELS);
   private int topLeftY = 0; // always 0
   private boolean right = true;
   
-  public PerpendicularVerticalPlane(color c, int position, boolean right) {
+  public VerticalPlane(color c, int xPosition, boolean right) {
     this.c = c;
-    this.position = position;
+    this.xPosition = xPosition;
     this.right = right;
   }
   
@@ -113,7 +222,7 @@ class PerpendicularVerticalPlane extends Plane {
    * Draw rectagle at correct height across screen
    */
   public void draw() {
-    int topLeftX = (maxPosition - position) * w; // determined from position
+    int topLeftX = (Position.maxXPosition - xPosition) * w; // determined from position
     fill(c);
     rect(topLeftX, topLeftY, w, h);
     rect(topLeftX + Constants.PANEL_WIDTH, topLeftY, w, h);
@@ -121,19 +230,19 @@ class PerpendicularVerticalPlane extends Plane {
     rect(topLeftX + (Constants.PANEL_WIDTH*3), topLeftY, w, h);
   }
   
-  public void move() {
-    if (position == maxPosition) {
+  public void shift() {
+    if (xPosition == Position.maxXPosition) {
       right = false; // move left
     }
-    if (position == minPosition) {
+    if (xPosition == Position.minXPosition) {
       right = true; // move right
     }
     if (right) {
-      // move up
-      position++;
+      // move right
+      xPosition++;
     } else {
-      // move down
-      position--;
+      // move left
+      xPosition--;
     }
   }
   
